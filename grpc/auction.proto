@@ -10,8 +10,10 @@ service AuctionService {
 }
 
 message BidRequest {
-    int32 amount = 1;
-    int32 timestamp = 2;
+    string auctionName = 1;
+    string bidderName = 2;
+    int32 amount = 3;
+    int32 timestamp = 4;
 }
 
 message BidResponse {
@@ -20,12 +22,13 @@ message BidResponse {
 }
 
 message ResultRequest {
-    int32 timestamp = 1;
+    string auctionName = 1;
+    int32 timestamp = 2;
 }
 
 message ResultResponse {
     string status = 1;
     int32 highestBid = 2;
-    string winner = 3;
+    string bidderName = 3;
     int32 timestamp = 4;
 }
