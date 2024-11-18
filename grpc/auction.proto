@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+option go_package = "auction/grpc";
+
+package grpc;
+
+service AuctionService {
+    rpc bid(BidRequest) returns (BidResponse) {};
+    rpc result(ResultRequest) returns (ResultResponse) {};
+}
+
+message BidRequest {
+    int32 amount = 1;
+    int32 timestamp = 2;
+}
+
+message BidResponse {
+    string status = 1;
+    int32 timestamp = 2;
+}
+
+message ResultRequest {
+    int32 timestamp = 1;
+}
+
+message ResultResponse {
+    string status = 1;
+    int32 highestBid = 2;
+    string winner = 3;
+    int32 timestamp = 4;
+}
