@@ -7,6 +7,9 @@ package grpc;
 service AuctionService {
     rpc bid(BidRequest) returns (BidResponse) {};
     rpc result(ResultRequest) returns (ResultResponse) {};
+    rpc heartBeat(HeartBeatRequest) returns (HeartBeatResponse) {};
+    rpc election(ElectionRequest) returns (ElectionResponse) {};
+    rpc broadcastLeader(BroadcastLeaderRequest) returns (BroadcastLeaderResponse) {};
 }
 
 message BidRequest {
@@ -32,3 +35,21 @@ message ResultResponse {
     string bidderName = 3;
     int32 timestamp = 4;
 }
+
+message HeartBeatRequest {}
+
+message HeartBeatResponse {
+    string status = 1;
+}
+
+message ElectionRequest {
+    string id = 1;
+}
+
+message ElectionResponse {}
+
+message BroadcastLeaderRequest {
+    string leader = 1;
+}
+
+message BroadcastLeaderResponse {}

@@ -272,6 +272,261 @@ func (x *ResultResponse) GetTimestamp() int32 {
 	return 0
 }
 
+type HeartBeatRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *HeartBeatRequest) Reset() {
+	*x = HeartBeatRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_auction_proto_msgTypes[4]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *HeartBeatRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*HeartBeatRequest) ProtoMessage() {}
+
+func (x *HeartBeatRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_auction_proto_msgTypes[4]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use HeartBeatRequest.ProtoReflect.Descriptor instead.
+func (*HeartBeatRequest) Descriptor() ([]byte, []int) {
+	return file_auction_proto_rawDescGZIP(), []int{4}
+}
+
+type HeartBeatResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Status string `protobuf:"bytes,1,opt,name=status,proto3" json:"status,omitempty"`
+}
+
+func (x *HeartBeatResponse) Reset() {
+	*x = HeartBeatResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_auction_proto_msgTypes[5]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *HeartBeatResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*HeartBeatResponse) ProtoMessage() {}
+
+func (x *HeartBeatResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_auction_proto_msgTypes[5]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use HeartBeatResponse.ProtoReflect.Descriptor instead.
+func (*HeartBeatResponse) Descriptor() ([]byte, []int) {
+	return file_auction_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *HeartBeatResponse) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+type ElectionRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+}
+
+func (x *ElectionRequest) Reset() {
+	*x = ElectionRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_auction_proto_msgTypes[6]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *ElectionRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ElectionRequest) ProtoMessage() {}
+
+func (x *ElectionRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_auction_proto_msgTypes[6]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ElectionRequest.ProtoReflect.Descriptor instead.
+func (*ElectionRequest) Descriptor() ([]byte, []int) {
+	return file_auction_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *ElectionRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+type ElectionResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *ElectionResponse) Reset() {
+	*x = ElectionResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_auction_proto_msgTypes[7]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *ElectionResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ElectionResponse) ProtoMessage() {}
+
+func (x *ElectionResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_auction_proto_msgTypes[7]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ElectionResponse.ProtoReflect.Descriptor instead.
+func (*ElectionResponse) Descriptor() ([]byte, []int) {
+	return file_auction_proto_rawDescGZIP(), []int{7}
+}
+
+type BroadcastLeaderRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Leader string `protobuf:"bytes,1,opt,name=leader,proto3" json:"leader,omitempty"`
+}
+
+func (x *BroadcastLeaderRequest) Reset() {
+	*x = BroadcastLeaderRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_auction_proto_msgTypes[8]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *BroadcastLeaderRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*BroadcastLeaderRequest) ProtoMessage() {}
+
+func (x *BroadcastLeaderRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_auction_proto_msgTypes[8]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use BroadcastLeaderRequest.ProtoReflect.Descriptor instead.
+func (*BroadcastLeaderRequest) Descriptor() ([]byte, []int) {
+	return file_auction_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *BroadcastLeaderRequest) GetLeader() string {
+	if x != nil {
+		return x.Leader
+	}
+	return ""
+}
+
+type BroadcastLeaderResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *BroadcastLeaderResponse) Reset() {
+	*x = BroadcastLeaderResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_auction_proto_msgTypes[9]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *BroadcastLeaderResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*BroadcastLeaderResponse) ProtoMessage() {}
+
+func (x *BroadcastLeaderResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_auction_proto_msgTypes[9]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use BroadcastLeaderResponse.ProtoReflect.Descriptor instead.
+func (*BroadcastLeaderResponse) Descriptor() ([]byte, []int) {
+	return file_auction_proto_rawDescGZIP(), []int{9}
+}
+
 var File_auction_proto protoreflect.FileDescriptor
 
 var file_auction_proto_rawDesc = []byte{
@@ -302,16 +557,41 @@ var file_auction_proto_rawDesc = []byte{
 	0x0a, 0x62, 0x69, 0x64, 0x64, 0x65, 0x72, 0x4e, 0x61, 0x6d, 0x65, 0x18, 0x03, 0x20, 0x01, 0x28,
 	0x09, 0x52, 0x0a, 0x62, 0x69, 0x64, 0x64, 0x65, 0x72, 0x4e, 0x61, 0x6d, 0x65, 0x12, 0x1c, 0x0a,
 	0x09, 0x74, 0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x18, 0x04, 0x20, 0x01, 0x28, 0x05,
-	0x52, 0x09, 0x74, 0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x32, 0x75, 0x0a, 0x0e, 0x41,
-	0x75, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x2c, 0x0a,
-	0x03, 0x62, 0x69, 0x64, 0x12, 0x10, 0x2e, 0x67, 0x72, 0x70, 0x63, 0x2e, 0x42, 0x69, 0x64, 0x52,
-	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x11, 0x2e, 0x67, 0x72, 0x70, 0x63, 0x2e, 0x42, 0x69,
-	0x64, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x35, 0x0a, 0x06, 0x72,
-	0x65, 0x73, 0x75, 0x6c, 0x74, 0x12, 0x13, 0x2e, 0x67, 0x72, 0x70, 0x63, 0x2e, 0x52, 0x65, 0x73,
-	0x75, 0x6c, 0x74, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x14, 0x2e, 0x67, 0x72, 0x70,
-	0x63, 0x2e, 0x52, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
-	0x22, 0x00, 0x42, 0x0e, 0x5a, 0x0c, 0x61, 0x75, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x2f, 0x67, 0x72,
-	0x70, 0x63, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x52, 0x09, 0x74, 0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x22, 0x12, 0x0a, 0x10, 0x48,
+	0x65, 0x61, 0x72, 0x74, 0x42, 0x65, 0x61, 0x74, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x22,
+	0x2b, 0x0a, 0x11, 0x48, 0x65, 0x61, 0x72, 0x74, 0x42, 0x65, 0x61, 0x74, 0x52, 0x65, 0x73, 0x70,
+	0x6f, 0x6e, 0x73, 0x65, 0x12, 0x16, 0x0a, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x18, 0x01,
+	0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x22, 0x21, 0x0a, 0x0f,
+	0x45, 0x6c, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12,
+	0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x22,
+	0x12, 0x0a, 0x10, 0x45, 0x6c, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f,
+	0x6e, 0x73, 0x65, 0x22, 0x30, 0x0a, 0x16, 0x42, 0x72, 0x6f, 0x61, 0x64, 0x63, 0x61, 0x73, 0x74,
+	0x4c, 0x65, 0x61, 0x64, 0x65, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x16, 0x0a,
+	0x06, 0x6c, 0x65, 0x61, 0x64, 0x65, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x6c,
+	0x65, 0x61, 0x64, 0x65, 0x72, 0x22, 0x19, 0x0a, 0x17, 0x42, 0x72, 0x6f, 0x61, 0x64, 0x63, 0x61,
+	0x73, 0x74, 0x4c, 0x65, 0x61, 0x64, 0x65, 0x72, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
+	0x32, 0xc4, 0x02, 0x0a, 0x0e, 0x41, 0x75, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x53, 0x65, 0x72, 0x76,
+	0x69, 0x63, 0x65, 0x12, 0x2c, 0x0a, 0x03, 0x62, 0x69, 0x64, 0x12, 0x10, 0x2e, 0x67, 0x72, 0x70,
+	0x63, 0x2e, 0x42, 0x69, 0x64, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x11, 0x2e, 0x67,
+	0x72, 0x70, 0x63, 0x2e, 0x42, 0x69, 0x64, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22,
+	0x00, 0x12, 0x35, 0x0a, 0x06, 0x72, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x12, 0x13, 0x2e, 0x67, 0x72,
+	0x70, 0x63, 0x2e, 0x52, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
+	0x1a, 0x14, 0x2e, 0x67, 0x72, 0x70, 0x63, 0x2e, 0x52, 0x65, 0x73, 0x75, 0x6c, 0x74, 0x52, 0x65,
+	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x3e, 0x0a, 0x09, 0x68, 0x65, 0x61, 0x72,
+	0x74, 0x42, 0x65, 0x61, 0x74, 0x12, 0x16, 0x2e, 0x67, 0x72, 0x70, 0x63, 0x2e, 0x48, 0x65, 0x61,
+	0x72, 0x74, 0x42, 0x65, 0x61, 0x74, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x17, 0x2e,
+	0x67, 0x72, 0x70, 0x63, 0x2e, 0x48, 0x65, 0x61, 0x72, 0x74, 0x42, 0x65, 0x61, 0x74, 0x52, 0x65,
+	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x3b, 0x0a, 0x08, 0x65, 0x6c, 0x65, 0x63,
+	0x74, 0x69, 0x6f, 0x6e, 0x12, 0x15, 0x2e, 0x67, 0x72, 0x70, 0x63, 0x2e, 0x45, 0x6c, 0x65, 0x63,
+	0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x16, 0x2e, 0x67, 0x72,
+	0x70, 0x63, 0x2e, 0x45, 0x6c, 0x65, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f,
+	0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x50, 0x0a, 0x0f, 0x62, 0x72, 0x6f, 0x61, 0x64, 0x63, 0x61,
+	0x73, 0x74, 0x4c, 0x65, 0x61, 0x64, 0x65, 0x72, 0x12, 0x1c, 0x2e, 0x67, 0x72, 0x70, 0x63, 0x2e,
+	0x42, 0x72, 0x6f, 0x61, 0x64, 0x63, 0x61, 0x73, 0x74, 0x4c, 0x65, 0x61, 0x64, 0x65, 0x72, 0x52,
+	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x1d, 0x2e, 0x67, 0x72, 0x70, 0x63, 0x2e, 0x42, 0x72,
+	0x6f, 0x61, 0x64, 0x63, 0x61, 0x73, 0x74, 0x4c, 0x65, 0x61, 0x64, 0x65, 0x72, 0x52, 0x65, 0x73,
+	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x42, 0x0e, 0x5a, 0x0c, 0x61, 0x75, 0x63, 0x74, 0x69,
+	0x6f, 0x6e, 0x2f, 0x67, 0x72, 0x70, 0x63, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -326,20 +606,32 @@ func file_auction_proto_rawDescGZIP() []byte {
 	return file_auction_proto_rawDescData
 }
 
-var file_auction_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_auction_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_auction_proto_goTypes = []any{
-	(*BidRequest)(nil),     // 0: grpc.BidRequest
-	(*BidResponse)(nil),    // 1: grpc.BidResponse
-	(*ResultRequest)(nil),  // 2: grpc.ResultRequest
-	(*ResultResponse)(nil), // 3: grpc.ResultResponse
+	(*BidRequest)(nil),              // 0: grpc.BidRequest
+	(*BidResponse)(nil),             // 1: grpc.BidResponse
+	(*ResultRequest)(nil),           // 2: grpc.ResultRequest
+	(*ResultResponse)(nil),          // 3: grpc.ResultResponse
+	(*HeartBeatRequest)(nil),        // 4: grpc.HeartBeatRequest
+	(*HeartBeatResponse)(nil),       // 5: grpc.HeartBeatResponse
+	(*ElectionRequest)(nil),         // 6: grpc.ElectionRequest
+	(*ElectionResponse)(nil),        // 7: grpc.ElectionResponse
+	(*BroadcastLeaderRequest)(nil),  // 8: grpc.BroadcastLeaderRequest
+	(*BroadcastLeaderResponse)(nil), // 9: grpc.BroadcastLeaderResponse
 }
 var file_auction_proto_depIdxs = []int32{
 	0, // 0: grpc.AuctionService.bid:input_type -> grpc.BidRequest
 	2, // 1: grpc.AuctionService.result:input_type -> grpc.ResultRequest
-	1, // 2: grpc.AuctionService.bid:output_type -> grpc.BidResponse
-	3, // 3: grpc.AuctionService.result:output_type -> grpc.ResultResponse
-	2, // [2:4] is the sub-list for method output_type
-	0, // [0:2] is the sub-list for method input_type
+	4, // 2: grpc.AuctionService.heartBeat:input_type -> grpc.HeartBeatRequest
+	6, // 3: grpc.AuctionService.election:input_type -> grpc.ElectionRequest
+	8, // 4: grpc.AuctionService.broadcastLeader:input_type -> grpc.BroadcastLeaderRequest
+	1, // 5: grpc.AuctionService.bid:output_type -> grpc.BidResponse
+	3, // 6: grpc.AuctionService.result:output_type -> grpc.ResultResponse
+	5, // 7: grpc.AuctionService.heartBeat:output_type -> grpc.HeartBeatResponse
+	7, // 8: grpc.AuctionService.election:output_type -> grpc.ElectionResponse
+	9, // 9: grpc.AuctionService.broadcastLeader:output_type -> grpc.BroadcastLeaderResponse
+	5, // [5:10] is the sub-list for method output_type
+	0, // [0:5] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -399,6 +691,78 @@ func file_auction_proto_init() {
 				return nil
 			}
 		}
+		file_auction_proto_msgTypes[4].Exporter = func(v any, i int) any {
+			switch v := v.(*HeartBeatRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_auction_proto_msgTypes[5].Exporter = func(v any, i int) any {
+			switch v := v.(*HeartBeatResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_auction_proto_msgTypes[6].Exporter = func(v any, i int) any {
+			switch v := v.(*ElectionRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_auction_proto_msgTypes[7].Exporter = func(v any, i int) any {
+			switch v := v.(*ElectionResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_auction_proto_msgTypes[8].Exporter = func(v any, i int) any {
+			switch v := v.(*BroadcastLeaderRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_auction_proto_msgTypes[9].Exporter = func(v any, i int) any {
+			switch v := v.(*BroadcastLeaderResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -406,7 +770,7 @@ func file_auction_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_auction_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   4,
+			NumMessages:   10,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
