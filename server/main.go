@@ -9,6 +9,7 @@ import (
 	"net"
 	"os"
 	"strings"
+	"sync"
 	"time"
 
 	"google.golang.org/grpc"
@@ -113,6 +114,7 @@ func (s *Server) Election(ctx context.Context, in *pb.ElectionRequest) (*pb.Elec
 }
 
 func (s *Server) BroadcastLeader(ctx context.Context, in *pb.BroadcastLeaderRequest) (*pb.BroadcastLeaderResponse, error) {
+	log.Printf("Leader is %s\n", in.Leader)
 	return &pb.BroadcastLeaderResponse{}, nil
 }
 
@@ -164,7 +166,7 @@ func getConnection(id string, port string) (*grpc.ClientConn, error) {
 	var opts []grpc.DialOption
 	opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
 
-	conn, err := grpc.NewClient(port, opts...)
+	conn, err := grpc.NewClient(fmt.Sprintf("localhost:%s", port), opts...)
 	if err != nil {
 		log.Fatalf("Connection to %s failed: %v\n", port, err)
 		return nil, err
@@ -175,7 +177,9 @@ func getConnection(id string, port string) (*grpc.ClientConn, error) {
 	return nodeConnections[id], nil
 }
 
-func (s *Server) sendElection(port string) bool {
+func (s *Server) sendElection(port string, wg *sync.WaitGroup) bool {
+	defer wg.Done()
+
 	conn, err := getConnection(s.id, port)
 
 	if err != nil {
@@ -183,42 +187,42 @@ func (s *Server) sendElection(port string) bool {
 		return false
 	}
 
-	// ctx, cancel := context.WithTimeout(context.Background(), 1000)
-	// defer cancel()
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
 
 	client := pb.NewAuctionServiceClient(conn)
-	_, err = client.Election(context.Background(), &pb.ElectionRequest{ Id: s.id })
+	_, err = client.Election(ctx, &pb.ElectionRequest{ Id: s.id })
 	if err != nil {
-		log.Printf("Election request to %s", port)
+		log.Printf("Election request to %s failed", port)
 		return false
 	}
 
-	log.Printf("Election request to %s succeeded", port)
 	return true
 }
 
 func (s *Server) triggerLeaderElection() {
-	timeout := time.Duration(5 * time.Second)
-	responseRecieved := make(chan bool)
+	var wg sync.WaitGroup
+	responseRecieved := false
 
 	for _, node := range nodeAddresses {
 		if node.id > s.id {
+			wg.Add(1)
 			go func(port string) {
-				if s.sendElection(port) {
-					responseRecieved <- true
+				if s.sendElection(port, &wg) {
+					responseRecieved = true
 				}
 			}(node.port)
 		}
 	}
 
-	select {
-		case <-responseRecieved: // If any response is received
-			log.Printf("Node %s received response so it is not the leader", s.id)
-		case <-time.After(timeout): // If timeout occurs
-			log.Printf("Node %s received no response; declaring itself leader", s.id)
-			isLeader = true
-			s.announceLeadership()
+	wg.Wait()
+	
+	if responseRecieved {
+		return
 	}
+
+	isLeader = true
+	s.announceLeadership()
 }
 
 func (s *Server) announceLeadership() {
