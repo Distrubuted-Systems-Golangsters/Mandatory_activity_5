@@ -5,9 +5,14 @@ option go_package = "auction/grpc";
 package grpc;
 
 service AuctionService {
+    rpc startAuction(StartAuctionRequest) returns (StartAuctionResponse) {};
     rpc bid(BidRequest) returns (BidResponse) {};
     rpc result(ResultRequest) returns (ResultResponse) {};
 }
+
+message StartAuctionRequest {}
+
+message StartAuctionResponse {}
 
 message BidRequest {
     string bidderName = 2;

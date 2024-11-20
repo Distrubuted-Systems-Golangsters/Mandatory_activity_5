@@ -18,8 +18,8 @@ import (
 var bidderName string
 var serverPorts = []string{"localhost:8080", "localhost:8081", "localhost:8082"}
 var connections []pb.AuctionServiceClient
-var minAcks = 1
-var minReads = 1
+var minAcks = 2
+var minReads = 2
 
 func main() {
 	setServerConnections()
@@ -41,16 +41,37 @@ func setServerConnections() {
 	}
 }
 
+func startAuction() {
+	var acks = make(chan bool)
+
+	for _, client := range connections {
+		go func() {
+			_, err := client.StartAuction(context.Background(), &pb.StartAuctionRequest{})
+
+			if err != nil {
+				return
+			}
+
+			acks <- true
+		}()
+	}
+
+	for i := 0; i < minAcks; i++ {
+		<-acks
+	}
+
+	log.Println("You started an auction")
+}
+
 // If we don't get minAcks acknowledgements, the program will hang.
 // We can handle M-N failures where M is the number of servers and N
 // is the minumum number of akonowledgements required.
 func placeBid(amount int) (string, error) {
-	var wg sync.WaitGroup
+	var acks = make(chan bool)
 	var mu sync.Mutex
 
 	var newestResponse = &pb.BidResponse{ Status: "Failed", Timestamp: 0 }
 
-	wg.Add(minAcks)
 	for _, client := range connections {
 		go func() {
 			res, err := client.Bid(context.Background(), &pb.BidRequest{ BidderName: bidderName, Amount: int32(amount) })
@@ -65,11 +86,13 @@ func placeBid(amount int) (string, error) {
 			}
 			mu.Unlock()
 	
-			wg.Done()
+			acks <- true
 		}()
 	}
 
-	wg.Wait()
+	for i := 0; i < minAcks; i++ {
+		<-acks
+	}
 
 	var message string
 	if newestResponse.Status == "Success" {
@@ -82,12 +105,11 @@ func placeBid(amount int) (string, error) {
 }
 
 func getAuctionStatus() (string, error) {
-	var wg sync.WaitGroup
+	var reads = make(chan bool)
 	var mu sync.Mutex
 
 	var newestResponse = &pb.ResultResponse{ Status: "Ongoing", HighestBid: 0, BidderName: "No bidder", Timestamp: 0 }
 
-	wg.Add(minReads)
 	for _, client := range connections {
 		go func() {
 			res, err := client.Result(context.Background(), &pb.ResultRequest{})
@@ -102,11 +124,13 @@ func getAuctionStatus() (string, error) {
 			}
 			mu.Unlock()
 	
-			wg.Done()
+			reads <- true
 		}()
 	}
 
-	wg.Wait()
+	for i := 0; i < minReads; i++ {
+		<-reads
+	}
 
 	var message string
 	if newestResponse.Status == "Ongoing" {
@@ -151,11 +175,14 @@ func startApp() {
 
 			log.Println(message)
 			continue
+		} else if enteredString == "start" {
+			startAuction()
+			continue
 		}
 
 		bidAmount, err := strconv.Atoi(enteredString)
 		if err != nil {
-			fmt.Println("Error converting string to integer:", err)
+			fmt.Println("Please type either 'start', 'status' or an integer:", err)
 		}
 
 		message, err := placeBid(bidAmount)

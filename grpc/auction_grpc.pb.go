@@ -19,14 +19,16 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	AuctionService_Bid_FullMethodName    = "/grpc.AuctionService/bid"
-	AuctionService_Result_FullMethodName = "/grpc.AuctionService/result"
+	AuctionService_StartAuction_FullMethodName = "/grpc.AuctionService/startAuction"
+	AuctionService_Bid_FullMethodName          = "/grpc.AuctionService/bid"
+	AuctionService_Result_FullMethodName       = "/grpc.AuctionService/result"
 )
 
 // AuctionServiceClient is the client API for AuctionService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AuctionServiceClient interface {
+	StartAuction(ctx context.Context, in *StartAuctionRequest, opts ...grpc.CallOption) (*StartAuctionResponse, error)
 	Bid(ctx context.Context, in *BidRequest, opts ...grpc.CallOption) (*BidResponse, error)
 	Result(ctx context.Context, in *ResultRequest, opts ...grpc.CallOption) (*ResultResponse, error)
 }
@@ -37,6 +39,16 @@ type auctionServiceClient struct {
 
 func NewAuctionServiceClient(cc grpc.ClientConnInterface) AuctionServiceClient {
 	return &auctionServiceClient{cc}
+}
+
+func (c *auctionServiceClient) StartAuction(ctx context.Context, in *StartAuctionRequest, opts ...grpc.CallOption) (*StartAuctionResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(StartAuctionResponse)
+	err := c.cc.Invoke(ctx, AuctionService_StartAuction_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *auctionServiceClient) Bid(ctx context.Context, in *BidRequest, opts ...grpc.CallOption) (*BidResponse, error) {
@@ -63,6 +75,7 @@ func (c *auctionServiceClient) Result(ctx context.Context, in *ResultRequest, op
 // All implementations must embed UnimplementedAuctionServiceServer
 // for forward compatibility.
 type AuctionServiceServer interface {
+	StartAuction(context.Context, *StartAuctionRequest) (*StartAuctionResponse, error)
 	Bid(context.Context, *BidRequest) (*BidResponse, error)
 	Result(context.Context, *ResultRequest) (*ResultResponse, error)
 	mustEmbedUnimplementedAuctionServiceServer()
@@ -75,6 +88,9 @@ type AuctionServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedAuctionServiceServer struct{}
 
+func (UnimplementedAuctionServiceServer) StartAuction(context.Context, *StartAuctionRequest) (*StartAuctionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method StartAuction not implemented")
+}
 func (UnimplementedAuctionServiceServer) Bid(context.Context, *BidRequest) (*BidResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Bid not implemented")
 }
@@ -100,6 +116,24 @@ func RegisterAuctionServiceServer(s grpc.ServiceRegistrar, srv AuctionServiceSer
 		t.testEmbeddedByValue()
 	}
 	s.RegisterService(&AuctionService_ServiceDesc, srv)
+}
+
+func _AuctionService_StartAuction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(StartAuctionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuctionServiceServer).StartAuction(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuctionService_StartAuction_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuctionServiceServer).StartAuction(ctx, req.(*StartAuctionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _AuctionService_Bid_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -145,6 +179,10 @@ var AuctionService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "grpc.AuctionService",
 	HandlerType: (*AuctionServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "startAuction",
+			Handler:    _AuctionService_StartAuction_Handler,
+		},
 		{
 			MethodName: "bid",
 			Handler:    _AuctionService_Bid_Handler,

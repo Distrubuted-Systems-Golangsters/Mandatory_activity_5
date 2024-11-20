@@ -59,6 +59,18 @@ func main() {
 	auctionPrompt()
 }
 
+func (s *Server) StartAuction(ctx context.Context, in *pb.StartAuctionRequest) (*pb.StartAuctionResponse, error) {
+	auction = &Auction{ 
+		highestBid: 0, 
+		bidderName: "No bidder",  
+		endTime: time.Now().Add(time.Duration(auctionTimeLength) * time.Second),
+	}
+
+	log.Printf("Auction started. Auction will end in %d seconds\n", auctionTimeLength)
+
+	return &pb.StartAuctionResponse{}, nil
+}
+
 func (s *Server) Bid(ctx context.Context, in *pb.BidRequest) (*pb.BidResponse, error) {
 	status := "Fail"
 	
