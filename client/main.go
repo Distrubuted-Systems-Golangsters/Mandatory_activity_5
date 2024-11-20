@@ -9,59 +9,113 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"sync"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
 
 var bidderName string
+var serverPorts = []string{"localhost:8080", "localhost:8081", "localhost:8082"}
+var connections []pb.AuctionServiceClient
+var minAcks = 1
+var minReads = 1
 
 func main() {
-	var opts []grpc.DialOption
-	opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
-
-	conn, err := grpc.NewClient("localhost:8080", opts...)
-
-	if err != nil {
-		log.Fatalf("Connection failed: %v\n", err)
-	}
-
-	client := pb.NewAuctionServiceClient(conn)
-	startApp(client)
+	setServerConnections()
+	startApp()
 }
 
-func placeBid(auctionName string, amount int, client pb.AuctionServiceClient) (string, error) {
-	res, err := client.Bid(context.Background(), &pb.BidRequest{ AuctionName: auctionName, BidderName: bidderName, Amount: int32(amount), Timestamp: 0 })
+func setServerConnections() {
+	for _, port := range serverPorts {
+		var opts []grpc.DialOption
+		opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
 
-	if err != nil {
-		return "", err
+		conn, err := grpc.NewClient(port, opts...)
+
+		if err != nil {
+			log.Fatalf("Connection failed: %v\n", err)
+		}
+
+		connections = append(connections, pb.NewAuctionServiceClient(conn))
+	}
+}
+
+// If we don't get minAcks acknowledgements, the program will hang.
+// We can handle M-N failures where M is the number of servers and N
+// is the minumum number of akonowledgements required.
+func placeBid(amount int) (string, error) {
+	var wg sync.WaitGroup
+	var mu sync.Mutex
+
+	var newestResponse = &pb.BidResponse{ Status: "Failed", Timestamp: 0 }
+
+	wg.Add(minAcks)
+	for _, client := range connections {
+		go func() {
+			res, err := client.Bid(context.Background(), &pb.BidRequest{ BidderName: bidderName, Amount: int32(amount) })
+
+			if err != nil {
+				return
+			}
+		
+			mu.Lock()
+			if res.Timestamp > newestResponse.Timestamp {
+				newestResponse = res
+			}
+			mu.Unlock()
+	
+			wg.Done()
+		}()
 	}
 
+	wg.Wait()
+
 	var message string
-	if res.Status == "Success" {
-		message = fmt.Sprintf("Bid successful. You are now the highest bidder on the auction %s", auctionName)
+	if newestResponse.Status == "Success" {
+		message = "Bid successful. You are now the highest bidder"
 	} else {
 		message = "Bid failed"
 	}
 
-	return message, err
+	return message, nil
 }
 
-func getAuctionStatus(auctionName string, client pb.AuctionServiceClient) (string, error) {
-	res, err := client.Result(context.Background(), &pb.ResultRequest{ AuctionName: auctionName, Timestamp: 0 })
+func getAuctionStatus() (string, error) {
+	var wg sync.WaitGroup
+	var mu sync.Mutex
 
-	if err != nil {
-		return "", err
+	var newestResponse = &pb.ResultResponse{ Status: "Ongoing", HighestBid: 0, BidderName: "No bidder", Timestamp: 0 }
+
+	wg.Add(minReads)
+	for _, client := range connections {
+		go func() {
+			res, err := client.Result(context.Background(), &pb.ResultRequest{})
+
+			if err != nil {
+				return
+			}
+		
+			mu.Lock()
+			if res.Timestamp > newestResponse.Timestamp {
+				newestResponse = res
+			}
+			mu.Unlock()
+	
+			wg.Done()
+		}()
 	}
+
+	wg.Wait()
 
 	var message string
-	if res.Status == "Ongoing" {
-		message = fmt.Sprintf("Auction is ongoing. Highest bid is %d by %s", res.HighestBid, res.BidderName)
+	if newestResponse.Status == "Ongoing" {
+		message = fmt.Sprintf("Auction is ongoing. Highest bid is %d by %s", newestResponse.HighestBid, newestResponse.BidderName)
 	} else {
-		message = fmt.Sprintf("Auction has ended. Highest bid was %d by %s", res.HighestBid, res.BidderName)
+		message = fmt.Sprintf("Auction has ended. Highest bid was %d by %s", newestResponse.HighestBid, newestResponse.BidderName)
 	}
 
-	return message, err
+	return message, nil
 }
 
 func getBidderName() string {
@@ -76,7 +130,7 @@ func getBidderName() string {
 	return enteredString
 }
 
-func startApp(client pb.AuctionServiceClient) {
+func startApp() {
 	bidderName = getBidderName()
 
 	for {
@@ -87,11 +141,8 @@ func startApp(client pb.AuctionServiceClient) {
 		}
 		enteredString = strings.ToLower(strings.Trim(enteredString, "\r\n"))
 
-		auctionName := strings.Split(enteredString, " ")[0]
-		secondEnter := strings.Split(enteredString, " ")[1]
-
-		if secondEnter == "status" {
-			message, err := getAuctionStatus(auctionName, client)
+		if enteredString == "status" {
+			message, err := getAuctionStatus()
 
 			if err != nil {
 				log.Fatalf("Failed to get auction status: %v\n", err)
@@ -102,12 +153,12 @@ func startApp(client pb.AuctionServiceClient) {
 			continue
 		}
 
-		bid, err := strconv.Atoi(secondEnter)
+		bidAmount, err := strconv.Atoi(enteredString)
 		if err != nil {
 			fmt.Println("Error converting string to integer:", err)
 		}
 
-		message, err := placeBid(auctionName, bid, client)
+		message, err := placeBid(bidAmount)
 
 		if err != nil {
 			log.Fatalf("Failed to bid: %v\n", err)

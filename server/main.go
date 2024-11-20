@@ -9,11 +9,9 @@ import (
 	"net"
 	"os"
 	"strings"
-	"sync"
 	"time"
 
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 )
 
 type Server struct {
@@ -23,24 +21,14 @@ type Server struct {
 }
 
 type Auction struct {
-	name string
 	highestBid int32
 	bidderName string
 	endTime time.Time
 }
 
 var auctionTimeLength = 30
-var auctions = make(map[string]*Auction)
-
-var nodeAddresses = []Server{
-	{ id: "1", port: "8080" },
-	{ id: "2", port: "8081" },
-	{ id: "3", port: "8082" },
-}
-var maxProcessId = "3"
-var nodeConnections = make(map[string]*grpc.ClientConn)
-
-var isLeader = false
+var auction *Auction
+var timestamp = 0
 
 func NewServer(id string, port string) *Server {
 	return &Server{ id: id, port: port }
@@ -68,54 +56,33 @@ func main() {
 
 	server := NewServer(id, port)
 	go startListening(server)
-	fmt.Println(isLeader)
-	server.triggerLeaderElection()
-	fmt.Println(isLeader)
 	auctionPrompt()
 }
 
 func (s *Server) Bid(ctx context.Context, in *pb.BidRequest) (*pb.BidResponse, error) {
 	status := "Fail"
-	auction := auctions[in.AuctionName]
 	
 	if(auction.endTime.After(time.Now()) && in.Amount > auction.highestBid) {
 		auction.highestBid = in.Amount
 		auction.bidderName = in.BidderName
 		status = "Success"
-
-		// if(isLeader) {
-			
-		// }
 	}
 
-	return &pb.BidResponse{ Status: status, Timestamp: 0 }, nil
+	timestamp++
+
+	return &pb.BidResponse{ Status: status, Timestamp: int32(timestamp) }, nil
 }
 
 func (s *Server) Result(ctx context.Context, in *pb.ResultRequest) (*pb.ResultResponse, error) {
 	status := "Ongoing"
-	auction := auctions[in.AuctionName]
 
 	if(auction.endTime.Before(time.Now())) {
 		status = "Ended"
 	}
 
-	return &pb.ResultResponse{ Status: status, HighestBid: auction.highestBid, BidderName: auction.bidderName, Timestamp: 0 }, nil
-}
+	timestamp++
 
-func (s *Server) Election(ctx context.Context, in *pb.ElectionRequest) (*pb.ElectionResponse, error) {
-	if(s.id == maxProcessId) {
-		s.announceLeadership()
-		return &pb.ElectionResponse{}, nil
-	}
-	
-	s.triggerLeaderElection()
-	
-	return &pb.ElectionResponse{}, nil
-}
-
-func (s *Server) BroadcastLeader(ctx context.Context, in *pb.BroadcastLeaderRequest) (*pb.BroadcastLeaderResponse, error) {
-	log.Printf("Leader is %s\n", in.Leader)
-	return &pb.BroadcastLeaderResponse{}, nil
+	return &pb.ResultResponse{ Status: status, HighestBid: auction.highestBid, BidderName: auction.bidderName, Timestamp: int32(timestamp) }, nil
 }
 
 func startListening(server *Server) {
@@ -142,103 +109,21 @@ func startAuction() {
 	}
 	enteredString = strings.ToLower(strings.Trim(enteredString, "\r\n"))
 
-	auctions[enteredString] = &Auction{ 
-		name: enteredString, 
+	if enteredString != "start" {
+		return
+	}
+
+	auction = &Auction{ 
 		highestBid: 0, 
 		bidderName: "No bidder",  
 		endTime: time.Now().Add(time.Duration(auctionTimeLength) * time.Second),
 	}
 
-	log.Printf("Auction %v started. Auction will end in %d seconds\n", enteredString, auctionTimeLength)
+	log.Printf("Auction started. Auction will end in %d seconds\n", auctionTimeLength)
 }
 
 func auctionPrompt() {
 	for {
 		startAuction()
-	}
-}
-
-func getConnection(id string, port string) (*grpc.ClientConn, error) {
-	if nodeConnections[id] != nil {
-		return nodeConnections[id], nil
-	}
-
-	var opts []grpc.DialOption
-	opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
-
-	conn, err := grpc.NewClient(fmt.Sprintf("localhost:%s", port), opts...)
-	if err != nil {
-		log.Fatalf("Connection to %s failed: %v\n", port, err)
-		return nil, err
-	}
-
-	nodeConnections[id] = conn
-
-	return nodeConnections[id], nil
-}
-
-func (s *Server) sendElection(port string, wg *sync.WaitGroup) bool {
-	defer wg.Done()
-
-	conn, err := getConnection(s.id, port)
-
-	if err != nil {
-		log.Printf("Failed to connect to %s: %v", port, err)
-		return false
-	}
-
-	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
-	defer cancel()
-
-	client := pb.NewAuctionServiceClient(conn)
-	_, err = client.Election(ctx, &pb.ElectionRequest{ Id: s.id })
-	if err != nil {
-		log.Printf("Election request to %s failed", port)
-		return false
-	}
-
-	return true
-}
-
-func (s *Server) triggerLeaderElection() {
-	var wg sync.WaitGroup
-	responseRecieved := false
-
-	for _, node := range nodeAddresses {
-		if node.id > s.id {
-			wg.Add(1)
-			go func(port string) {
-				if s.sendElection(port, &wg) {
-					responseRecieved = true
-				}
-			}(node.port)
-		}
-	}
-
-	wg.Wait()
-	
-	if responseRecieved {
-		return
-	}
-
-	isLeader = true
-	s.announceLeadership()
-}
-
-func (s *Server) announceLeadership() {
-	for _, node := range nodeAddresses {
-		if node.id < s.id {
-			go func(port string) {
-				conn, err := getConnection(s.id, port)
-
-				if err != nil {
-					log.Printf("Failed to connect to %s: %v", port, err)
-					return
-				}
-
-				client := pb.NewAuctionServiceClient(conn)
-				client.BroadcastLeader(context.Background(), &pb.BroadcastLeaderRequest{ Leader: s.id })
-			}(node.port)
-		}
 	}
 }

@@ -19,11 +19,8 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	AuctionService_Bid_FullMethodName             = "/grpc.AuctionService/bid"
-	AuctionService_Result_FullMethodName          = "/grpc.AuctionService/result"
-	AuctionService_HeartBeat_FullMethodName       = "/grpc.AuctionService/heartBeat"
-	AuctionService_Election_FullMethodName        = "/grpc.AuctionService/election"
-	AuctionService_BroadcastLeader_FullMethodName = "/grpc.AuctionService/broadcastLeader"
+	AuctionService_Bid_FullMethodName    = "/grpc.AuctionService/bid"
+	AuctionService_Result_FullMethodName = "/grpc.AuctionService/result"
 )
 
 // AuctionServiceClient is the client API for AuctionService service.
@@ -32,9 +29,6 @@ const (
 type AuctionServiceClient interface {
 	Bid(ctx context.Context, in *BidRequest, opts ...grpc.CallOption) (*BidResponse, error)
 	Result(ctx context.Context, in *ResultRequest, opts ...grpc.CallOption) (*ResultResponse, error)
-	HeartBeat(ctx context.Context, in *HeartBeatRequest, opts ...grpc.CallOption) (*HeartBeatResponse, error)
-	Election(ctx context.Context, in *ElectionRequest, opts ...grpc.CallOption) (*ElectionResponse, error)
-	BroadcastLeader(ctx context.Context, in *BroadcastLeaderRequest, opts ...grpc.CallOption) (*BroadcastLeaderResponse, error)
 }
 
 type auctionServiceClient struct {
@@ -65,45 +59,12 @@ func (c *auctionServiceClient) Result(ctx context.Context, in *ResultRequest, op
 	return out, nil
 }
 
-func (c *auctionServiceClient) HeartBeat(ctx context.Context, in *HeartBeatRequest, opts ...grpc.CallOption) (*HeartBeatResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(HeartBeatResponse)
-	err := c.cc.Invoke(ctx, AuctionService_HeartBeat_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *auctionServiceClient) Election(ctx context.Context, in *ElectionRequest, opts ...grpc.CallOption) (*ElectionResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ElectionResponse)
-	err := c.cc.Invoke(ctx, AuctionService_Election_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *auctionServiceClient) BroadcastLeader(ctx context.Context, in *BroadcastLeaderRequest, opts ...grpc.CallOption) (*BroadcastLeaderResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(BroadcastLeaderResponse)
-	err := c.cc.Invoke(ctx, AuctionService_BroadcastLeader_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // AuctionServiceServer is the server API for AuctionService service.
 // All implementations must embed UnimplementedAuctionServiceServer
 // for forward compatibility.
 type AuctionServiceServer interface {
 	Bid(context.Context, *BidRequest) (*BidResponse, error)
 	Result(context.Context, *ResultRequest) (*ResultResponse, error)
-	HeartBeat(context.Context, *HeartBeatRequest) (*HeartBeatResponse, error)
-	Election(context.Context, *ElectionRequest) (*ElectionResponse, error)
-	BroadcastLeader(context.Context, *BroadcastLeaderRequest) (*BroadcastLeaderResponse, error)
 	mustEmbedUnimplementedAuctionServiceServer()
 }
 
@@ -119,15 +80,6 @@ func (UnimplementedAuctionServiceServer) Bid(context.Context, *BidRequest) (*Bid
 }
 func (UnimplementedAuctionServiceServer) Result(context.Context, *ResultRequest) (*ResultResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Result not implemented")
-}
-func (UnimplementedAuctionServiceServer) HeartBeat(context.Context, *HeartBeatRequest) (*HeartBeatResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method HeartBeat not implemented")
-}
-func (UnimplementedAuctionServiceServer) Election(context.Context, *ElectionRequest) (*ElectionResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Election not implemented")
-}
-func (UnimplementedAuctionServiceServer) BroadcastLeader(context.Context, *BroadcastLeaderRequest) (*BroadcastLeaderResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method BroadcastLeader not implemented")
 }
 func (UnimplementedAuctionServiceServer) mustEmbedUnimplementedAuctionServiceServer() {}
 func (UnimplementedAuctionServiceServer) testEmbeddedByValue()                        {}
@@ -186,60 +138,6 @@ func _AuctionService_Result_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AuctionService_HeartBeat_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(HeartBeatRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(AuctionServiceServer).HeartBeat(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: AuctionService_HeartBeat_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuctionServiceServer).HeartBeat(ctx, req.(*HeartBeatRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _AuctionService_Election_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ElectionRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(AuctionServiceServer).Election(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: AuctionService_Election_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuctionServiceServer).Election(ctx, req.(*ElectionRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _AuctionService_BroadcastLeader_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(BroadcastLeaderRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(AuctionServiceServer).BroadcastLeader(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: AuctionService_BroadcastLeader_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuctionServiceServer).BroadcastLeader(ctx, req.(*BroadcastLeaderRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // AuctionService_ServiceDesc is the grpc.ServiceDesc for AuctionService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -254,18 +152,6 @@ var AuctionService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "result",
 			Handler:    _AuctionService_Result_Handler,
-		},
-		{
-			MethodName: "heartBeat",
-			Handler:    _AuctionService_HeartBeat_Handler,
-		},
-		{
-			MethodName: "election",
-			Handler:    _AuctionService_Election_Handler,
-		},
-		{
-			MethodName: "broadcastLeader",
-			Handler:    _AuctionService_BroadcastLeader_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
