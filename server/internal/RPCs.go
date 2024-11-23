@@ -12,6 +12,8 @@ func (s *Server) StartAuction(ctx context.Context, in *pb.StartAuctionRequest) (
 	auction = NewAuction(auctionTimeLength)
 	mu.Unlock()
 
+	s.state.incrementTimestamp()
+
 	log.Printf("Auction started. Auction will end in %d seconds\n", auctionTimeLength)
 
 	return &pb.StartAuctionResponse{}, nil
@@ -63,7 +65,7 @@ func (s *Server) HealthCheck(ctx context.Context, in *pb.HealthCheckRequest) (*p
 		}
 		s.state.timestamp = int(in.Timestamp)
 
-		log.Printf("Updated auction state from server on port %s\n", s.port)
+		log.Printf("Updated auction state and timestamp\n")
 	}
 	mu.Unlock()
 
