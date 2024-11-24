@@ -22,7 +22,6 @@ var mu sync.Mutex
 var nodePorts = []string{"8080", "8081", "8082"}
 var connections = make(map[string]pb.AuctionServiceClient)
 
-var auctionTimeLength = 30
 var auction *Auction
 
 func NewServer(id string, port string) {

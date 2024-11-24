@@ -8,7 +8,7 @@ import (
 )
 
 func (s *Server) StartAuction(ctx context.Context, in *pb.StartAuctionRequest) (*pb.StartAuctionResponse, error) {
-	auctionTimeLength = int(in.AuctionDuration)
+	var auctionTimeLength = int(in.AuctionDuration)
 	mu.Lock()
 	auction = NewAuction(auctionTimeLength)
 	mu.Unlock()
