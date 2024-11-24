@@ -18,8 +18,8 @@ func (c *AuctionClient) handleStatus() {
 	log.Println(message)
 }
 
-func (c *AuctionClient) handleStart() {
-	c.startAuction()
+func (c *AuctionClient) handleStart(duration int) {
+	c.startAuction(duration)
 }
 
 func (c *AuctionClient) handleBid(input string) {
@@ -37,12 +37,14 @@ func (c *AuctionClient) handleBid(input string) {
 	log.Println(message)
 }
 
-func (c *AuctionClient) startAuction() {
+func (c *AuctionClient) startAuction(duration int) {
 	var acks = make(chan bool)
 
 	for _, client := range c.connections {
 		go func(client pb.AuctionServiceClient) {
-			_, err := client.StartAuction(context.Background(), &pb.StartAuctionRequest{})
+			_, err := client.StartAuction(context.Background(), &pb.StartAuctionRequest{
+				AuctionDuration: int32(duration),
+			})
 			if err != nil {
 				return
 			}

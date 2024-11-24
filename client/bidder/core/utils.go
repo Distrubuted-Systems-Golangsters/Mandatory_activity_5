@@ -24,7 +24,7 @@ func (c *AuctionClient) setupConnections() error {
 
 		c.connections = append(c.connections, pb.NewAuctionServiceClient(conn))
 	}
-	
+
 	return nil
 }
 

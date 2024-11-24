@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -38,13 +39,28 @@ func (c *AuctionClient) Start() {
 		}
 		enteredString = strings.ToLower(strings.Trim(enteredString, "\r\n"))
 
-		switch enteredString {
-			case "status":
-				c.handleStatus()
-			case "start":
-				c.handleStart()
-			default:
-				c.handleBid(enteredString)
+		parts := strings.Fields(enteredString)
+		if len(parts) == 0 {
+			continue
+		}
+
+		command := parts[0]
+		switch command {
+		case "status":
+			c.handleStatus()
+		case "start":
+			if len(parts) != 2 {
+				fmt.Println("Please provide duration of auction in seconds")
+				continue
+			}
+			duration, err := strconv.Atoi(parts[1])
+			if err != nil || duration <= 0 {
+				fmt.Println("Please provide a valid positive integer for the duration.")
+				continue
+			}
+			c.handleStart(duration)
+		default:
+			c.handleBid(enteredString)
 		}
 	}
 }

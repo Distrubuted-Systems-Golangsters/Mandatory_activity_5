@@ -13,7 +13,9 @@ service AuctionService {
     rpc healthCheck(HealthCheckRequest) returns (HealthCheckResponse) {};
 }
 
-message StartAuctionRequest {}
+message StartAuctionRequest {
+    int32 auctionDuration = 1;
+}
 
 message StartAuctionResponse {}
 

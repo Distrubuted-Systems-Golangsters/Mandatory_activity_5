@@ -8,6 +8,7 @@ import (
 )
 
 func (s *Server) StartAuction(ctx context.Context, in *pb.StartAuctionRequest) (*pb.StartAuctionResponse, error) {
+	auctionTimeLength = int(in.AuctionDuration)
 	mu.Lock()
 	auction = NewAuction(auctionTimeLength)
 	mu.Unlock()
@@ -21,13 +22,13 @@ func (s *Server) StartAuction(ctx context.Context, in *pb.StartAuctionRequest) (
 
 func (s *Server) Bid(ctx context.Context, in *pb.BidRequest) (*pb.BidResponse, error) {
 	if auction == nil {
-		return &pb.BidResponse{ Status: "Fail", Timestamp: int32(s.state.timestamp) }, nil
+		return &pb.BidResponse{Status: "Fail", Timestamp: int32(s.state.timestamp)}, nil
 	}
 
 	status := "Fail"
 
 	mu.Lock()
-	if(auction.endTime.After(time.Now()) && in.Amount > auction.highestBid) {
+	if auction.endTime.After(time.Now()) && in.Amount > auction.highestBid {
 		auction.highestBid = in.Amount
 		auction.bidderName = in.BidderName
 		status = "Success"
@@ -36,23 +37,23 @@ func (s *Server) Bid(ctx context.Context, in *pb.BidRequest) (*pb.BidResponse, e
 
 	s.state.incrementTimestamp()
 
-	return &pb.BidResponse{ Status: status, Timestamp: int32(s.state.timestamp) }, nil
+	return &pb.BidResponse{Status: status, Timestamp: int32(s.state.timestamp)}, nil
 }
 
 func (s *Server) Result(ctx context.Context, in *pb.ResultRequest) (*pb.ResultResponse, error) {
 	if auction == nil {
-		return &pb.ResultResponse{ Status: "Ended", HighestBid: 0, BidderName: "No bidder", Timestamp: int32(s.state.timestamp) }, nil
+		return &pb.ResultResponse{Status: "Ended", HighestBid: 0, BidderName: "No bidder", Timestamp: int32(s.state.timestamp)}, nil
 	}
 
 	status := "Ongoing"
 
-	if(auction.endTime.Before(time.Now())) {
+	if auction.endTime.Before(time.Now()) {
 		status = "Ended"
 	}
 
 	s.state.incrementTimestamp()
 
-	return &pb.ResultResponse{ Status: status, HighestBid: auction.highestBid, BidderName: auction.bidderName, Timestamp: int32(s.state.timestamp) }, nil
+	return &pb.ResultResponse{Status: status, HighestBid: auction.highestBid, BidderName: auction.bidderName, Timestamp: int32(s.state.timestamp)}, nil
 }
 
 func (s *Server) HealthCheck(ctx context.Context, in *pb.HealthCheckRequest) (*pb.HealthCheckResponse, error) {
@@ -61,7 +62,7 @@ func (s *Server) HealthCheck(ctx context.Context, in *pb.HealthCheckRequest) (*p
 		auction = &Auction{
 			highestBid: in.Auction.HighestBid,
 			bidderName: in.Auction.BidderName,
-			endTime: in.Auction.EndTime.AsTime(),
+			endTime:    in.Auction.EndTime.AsTime(),
 		}
 		s.state.timestamp = int(in.Timestamp)
 

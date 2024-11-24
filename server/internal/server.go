@@ -46,7 +46,7 @@ func (s *Server) startListening() {
 
 	grpcServer := grpc.NewServer()
 	pb.RegisterAuctionServiceServer(grpcServer, s)
-	
+
 	if err := grpcServer.Serve(lis); err != nil {
 		log.Fatalf("Failed to serve: %v\n", err)
 	}
