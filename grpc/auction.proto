@@ -4,14 +4,24 @@ option go_package = "auction/grpc";
 
 package grpc;
 
+import "google/protobuf/timestamp.proto";
+
 service AuctionService {
+    rpc startAuction(StartAuctionRequest) returns (StartAuctionResponse) {};
     rpc bid(BidRequest) returns (BidResponse) {};
     rpc result(ResultRequest) returns (ResultResponse) {};
+    rpc healthCheck(HealthCheckRequest) returns (HealthCheckResponse) {};
 }
 
+message StartAuctionRequest {
+    int32 auctionDuration = 1;
+}
+
+message StartAuctionResponse {}
+
 message BidRequest {
-    int32 amount = 1;
-    int32 timestamp = 2;
+    string bidderName = 2;
+    int32 amount = 3;
 }
 
 message BidResponse {
@@ -19,13 +29,24 @@ message BidResponse {
     int32 timestamp = 2;
 }
 
-message ResultRequest {
-    int32 timestamp = 1;
-}
+message ResultRequest {}
 
 message ResultResponse {
     string status = 1;
     int32 highestBid = 2;
-    string winner = 3;
+    string bidderName = 3;
     int32 timestamp = 4;
+}
+
+message HealthCheckRequest {
+    Auction auction = 1;
+    int32 timestamp = 2; 
+}
+
+message HealthCheckResponse {}
+
+message Auction {
+	int32 highestBid = 1;
+	string bidderName = 2;
+    google.protobuf.Timestamp endTime = 3;
 }
