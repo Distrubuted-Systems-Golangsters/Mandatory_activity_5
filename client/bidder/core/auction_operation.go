@@ -56,7 +56,7 @@ func (c *AuctionClient) startAuction(duration int) {
 		<-acks
 	}
 
-	log.Println("You started an auction")
+	log.Printf("You started an auction, the auction will end in %d seconds", duration)
 }
 
 func (c *AuctionClient) placeBid(amount int) (string, error) {
