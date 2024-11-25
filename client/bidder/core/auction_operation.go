@@ -7,6 +7,7 @@ import (
 	"log"
 	"strconv"
 	"sync"
+	"time"
 )
 
 func (c *AuctionClient) handleStatus() {
@@ -20,6 +21,9 @@ func (c *AuctionClient) handleStatus() {
 
 func (c *AuctionClient) handleStart(duration int) {
 	c.startAuction(duration)
+	//Start a timer to handle status after auction ends
+	time.AfterFunc(time.Duration(duration)*time.Second, func() { c.handleStatus() })
+	
 }
 
 func (c *AuctionClient) handleBid(input string) {
